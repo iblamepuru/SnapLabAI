@@ -1,0 +1,402 @@
+﻿from itertools import combinations
+
+from vision.engineering_ontology import COMPONENT_ONTOLOGY
+
+
+CATEGORY_RELATIONSHIPS = {
+    ("Controller", "Sensor"): (
+        "Sensor interface",
+        "A controller can acquire and process signals from a sensor."
+    ),
+    ("Controller", "Input"): (
+        "User input interface",
+        "A controller can receive user input from a switch or keypad."
+    ),
+    ("Controller", "Passive"): (
+        "Signal or power conditioning",
+        "Passive components can provide filtering, biasing, current limiting, or voltage division around a controller."
+    ),
+    ("Controller", "Switching"): (
+        "Electronic control",
+        "A controller can provide a control signal to a transistor switching stage."
+    ),
+    ("Controller", "Actuator"): (
+        "Actuator control",
+        "A controller can command an actuator through an appropriate driver or interface."
+    ),
+    ("Controller", "Driver"): (
+        "Control interface",
+        "A controller can provide control signals to a driver module."
+    ),
+    ("Controller", "Display"): (
+        "Display interface",
+        "A controller can drive a display for system feedback."
+    ),
+    ("Controller", "Communication"): (
+        "Communication interface",
+        "A controller can exchange data with a communication module."
+    ),
+    ("Controller", "Integrated Circuit"): (
+        "Signal processing interface",
+        "A controller can exchange signals with an integrated circuit."
+    ),
+    ("Controller", "Analog"): (
+        "Analog signal interface",
+        "A controller can exchange conditioned analog or digital signals with an analog circuit."
+    ),
+    ("Controller", "Interconnect"): (
+        "Electrical interconnection",
+        "An interconnect can carry power or signals between a controller and external circuitry."
+    ),
+    ("Controller", "Power"): (
+        "Power interface",
+        "A controller requires an appropriate power source or regulated supply."
+    ),
+    ("Controller", "Protection"): (
+        "Protection interface",
+        "Protection components can protect controller or load circuits from electrical faults and transients."
+    ),
+    ("Sensor", "Passive"): (
+        "Sensor conditioning",
+        "Passive components can bias, filter, or condition sensor signals."
+    ),
+    ("Sensor", "Switching"): (
+        "Sensor switching stage",
+        "A sensor signal can control a transistor switching stage."
+    ),
+    ("Sensor", "Interconnect"): (
+        "Sensor interconnection",
+        "Interconnect components can carry sensor power and signal paths."
+    ),
+    ("Sensor", "Power"): (
+        "Sensor power interface",
+        "Sensors require suitable power and ground connections."
+    ),
+    ("Sensor", "Analog"): (
+        "Analog signal conditioning",
+        "An analog circuit can condition or amplify sensor signals."
+    ),
+    ("Input", "Passive"): (
+        "Input conditioning",
+        "Passive components are commonly used for switch pull-ups, pull-downs, filtering, and current limiting."
+    ),
+    ("Input", "Controller"): (
+        "Controller input",
+        "An input device can provide a signal to a controller."
+    ),
+    ("Switching", "Passive"): (
+        "Switching-stage support",
+        "Passive components can provide biasing, gate or base control, filtering, and transient support."
+    ),
+    ("Switching", "Protection"): (
+        "Switching protection",
+        "Protection components can suppress transients and protect semiconductor switching stages."
+    ),
+    ("Switching", "Actuator"): (
+        "Power switching",
+        "A transistor can be used as a switching element for an actuator."
+    ),
+    ("Switching", "Power"): (
+        "Power switching",
+        "A power source can supply a transistor switching stage."
+    ),
+    ("Passive", "Protection"): (
+        "Protection or current control",
+        "Passive components can work with protection devices for current limiting, filtering, or voltage control."
+    ),
+    ("Passive", "Actuator"): (
+        "Actuator support",
+        "Passive components can provide current limiting, filtering, or suppression around an actuator."
+    ),
+    ("Passive", "Analog"): (
+        "Analog signal conditioning",
+        "Passive components are commonly used in analog filtering, biasing, and signal conditioning."
+    ),
+    ("Passive", "Power"): (
+        "Power conditioning",
+        "Passive components can filter, smooth, store, or regulate energy in power paths."
+    ),
+    ("Passive", "Passive"): (
+        "Passive circuit network",
+        "Passive components can form filtering, timing, voltage-divider, or energy-storage networks."
+    ),
+    ("Diode", "Resistor"): (
+        "Current limiting or protection",
+        "A resistor can limit current through a diode or LED."
+    ),
+    ("Motor", "Protection"): (
+        "Actuator protection",
+        "Protection components can suppress electrical transients generated by inductive loads."
+    ),
+    ("Driver", "Actuator"): (
+        "Actuator drive",
+        "A driver provides the required control and power interface for an actuator."
+    ),
+    ("Power", "Protection"): (
+        "Power protection",
+        "Protection components can protect power paths against overcurrent or voltage transients."
+    ),
+    ("Power", "Interconnect"): (
+        "Power distribution",
+        "Interconnects can carry electrical power between a supply and circuit components."
+    ),
+    ("Communication", "Controller"): (
+        "Communication interface",
+        "Communication modules commonly exchange data with a controller."
+    ),
+    ("Display", "Controller"): (
+        "Display interface",
+        "Displays commonly receive data or control signals from a controller."
+    ),
+    ("Integrated Circuit", "Interconnect"): (
+        "IC interconnection",
+        "Interconnect components can provide electrical access to integrated circuits."
+    ),
+    ("Prototyping", "Controller"): (
+        "Prototyping platform",
+        "Controller boards are commonly connected through breadboards during prototyping."
+    ),
+    ("Prototyping", "Sensor"): (
+        "Prototype sensor interface",
+        "Sensors are commonly connected through breadboards during circuit prototyping."
+    ),
+    ("Interconnect", "Interconnect"): (
+        "Electrical interconnection",
+        "Interconnect components can provide physical electrical paths between circuit elements."
+    )
+}
+
+
+CLASS_RELATIONSHIPS = {
+    ("Motor-Driver", "DC-Motor"): (
+        "Motor drive",
+        "A motor driver provides the power switching interface required to drive a DC motor."
+    ),
+    ("Motor-Driver", "Servo-Motor"): (
+        "Servo drive",
+        "A servo can receive control and power through an appropriate driver or controller interface."
+    ),
+    ("Relay-Module", "DC-Motor"): (
+        "Load switching",
+        "A relay module can switch power to a motor or other external load."
+    ),
+    ("Relay-Module", "Servo-Motor"): (
+        "Load switching",
+        "A relay can switch the supply path of an actuator when appropriate."
+    ),
+    ("Fuse", "Fuse-Base"): (
+        "Fuse mounting",
+        "A fuse base provides the mechanical and electrical mounting interface for a fuse."
+    ),
+    ("IC-Base-14-Pin", "IC-Chip"): (
+        "IC socket interface",
+        "A 14-pin IC socket provides a removable electrical interface for a compatible IC."
+    ),
+    ("IC-Base-28-Pin", "IC-Chip"): (
+        "IC socket interface",
+        "A 28-pin IC socket provides a removable electrical interface for a compatible IC."
+    ),
+    ("Arduino-Uno", "Breadboard"): (
+        "Prototyping platform",
+        "Arduino boards are commonly used with breadboards for temporary circuit prototyping."
+    ),
+    ("Arduino-Nano", "Breadboard"): (
+        "Prototyping platform",
+        "Arduino boards are commonly connected to breadboards during circuit prototyping."
+    ),
+    ("Arduino-Mega", "Breadboard"): (
+        "Prototyping platform",
+        "Arduino boards are commonly connected to breadboards during circuit prototyping."
+    ),
+    ("LED-Light", "Resistor"): (
+        "LED current limiting",
+        "A series resistor is commonly used to limit LED current."
+    ),
+    ("DC-Motor", "Diode"): (
+        "Flyback protection",
+        "A diode can suppress inductive transients around a DC motor switching circuit."
+    ),
+    ("Servo-Motor", "Controller"): (
+        "Servo control",
+        "A controller can generate the control signal required by a servo."
+    ),
+    ("Buzzer", "Controller"): (
+        "Audible output",
+        "A controller can drive a buzzer as an audible indicator."
+    ),
+    ("Keypad", "Controller"): (
+        "User input interface",
+        "A controller can read keypad row and column signals."
+    ),
+    ("RFID-Scanner", "Controller"): (
+        "Identification interface",
+        "A controller can process identification data from an RFID reader."
+    ),
+    ("Bluetooth-Module", "Controller"): (
+        "Wireless communication",
+        "A controller can exchange data through a Bluetooth module."
+    ),
+    ("GSM-Module", "Controller"): (
+        "Cellular communication",
+        "A controller can exchange data through a GSM module."
+    ),
+    ("LCD-Display", "Controller"): (
+        "Display interface",
+        "A controller can drive an LCD for status and measurement output."
+    ),
+    ("OLED-Display", "Controller"): (
+        "Display interface",
+        "A controller can drive an OLED for status and measurement output."
+    ),
+    ("7-Segment-Display", "Controller"): (
+        "Display interface",
+        "A controller can drive a seven-segment display for numerical output."
+    ),
+    ("Buck-Converter", "Controller"): (
+        "Regulated power supply",
+        "A buck converter can provide a regulated supply for a controller when the input range is appropriate."
+    ),
+    ("Bridge-Rectifier", "Capacitor-470mf"): (
+        "Rectifier smoothing",
+        "A bulk capacitor can smooth rectified voltage after a bridge rectifier."
+    ),
+    ("Bridge-Rectifier", "Generic-Capacitor"): (
+        "Rectifier smoothing",
+        "A capacitor can smooth the DC output of a rectifier."
+    ),
+    ("Zener-Diode", "Resistor"): (
+        "Voltage regulation",
+        "A resistor can limit current in a Zener-based voltage reference or clamp."
+    ),
+    ("OP-Amp", "Resistor"): (
+        "Analog signal conditioning",
+        "Resistors define gain, bias, and feedback networks around operational amplifiers."
+    ),
+    ("OP-Amp", "Capacitor-10mf"): (
+        "Analog filtering",
+        "A capacitor can participate in filtering or timing around an operational amplifier."
+    ),
+    ("Taper-Potentiometer", "OP-Amp"): (
+        "Adjustable analog control",
+        "A potentiometer can provide an adjustable input or feedback signal in an analog circuit."
+    ),
+    ("Trimmer-Potentiometer", "OP-Amp"): (
+        "Calibration control",
+        "A trimmer can provide adjustable calibration or bias in an analog circuit."
+    ),
+    ("Variable-Resistor", "OP-Amp"): (
+        "Adjustable analog control",
+        "A variable resistor can provide adjustable gain, bias, or signal conditioning."
+    )
+}
+
+
+def _category(class_name):
+    item = COMPONENT_ONTOLOGY.get(class_name)
+
+    if item is None:
+        return None
+
+    return item["category"]
+
+
+def _specific_relationship(class_a, class_b):
+    if (class_a, class_b) in CLASS_RELATIONSHIPS:
+        return CLASS_RELATIONSHIPS[(class_a, class_b)]
+
+    if (class_b, class_a) in CLASS_RELATIONSHIPS:
+        return CLASS_RELATIONSHIPS[(class_b, class_a)]
+
+    return None
+
+
+def _category_relationship(class_a, class_b):
+    category_a = _category(class_a)
+    category_b = _category(class_b)
+
+    if category_a is None or category_b is None:
+        return None
+
+    key = (category_a, category_b)
+
+    if key in CATEGORY_RELATIONSHIPS:
+        return CATEGORY_RELATIONSHIPS[key]
+
+    reverse_key = (category_b, category_a)
+
+    if reverse_key in CATEGORY_RELATIONSHIPS:
+        return CATEGORY_RELATIONSHIPS[reverse_key]
+
+    return None
+
+
+def _relationship_for(class_a, class_b):
+    specific = _specific_relationship(class_a, class_b)
+
+    if specific is not None:
+        relationship, reason = specific
+        return {
+            "component_a": class_a,
+            "component_b": class_b,
+            "relationship": relationship,
+            "reason": reason,
+            "confidence": "High engineering compatibility",
+            "evidence": "Component ontology"
+        }
+
+    category = _category_relationship(class_a, class_b)
+
+    if category is not None:
+        relationship, reason = category
+        return {
+            "component_a": class_a,
+            "component_b": class_b,
+            "relationship": relationship,
+            "reason": reason,
+            "confidence": "Engineering possibility",
+            "evidence": "Category compatibility"
+        }
+
+    return None
+
+
+def analyze_relationships(component_names):
+    unique_components = list(
+        dict.fromkeys(
+            name for name in component_names
+            if name in COMPONENT_ONTOLOGY
+        )
+    )
+
+    results = []
+
+    for class_a, class_b in combinations(unique_components, 2):
+        relationship = _relationship_for(class_a, class_b)
+
+        if relationship is not None:
+            results.append(relationship)
+
+    return results
+
+
+def analyze_all_pairs(component_names):
+    unique_components = list(
+        dict.fromkeys(
+            name for name in component_names
+            if name in COMPONENT_ONTOLOGY
+        )
+    )
+
+    results = []
+
+    for class_a, class_b in combinations(unique_components, 2):
+        relationship = _relationship_for(class_a, class_b)
+
+        results.append({
+            "component_a": class_a,
+            "component_b": class_b,
+            "has_relationship": relationship is not None,
+            "relationship": relationship
+        })
+
+    return results

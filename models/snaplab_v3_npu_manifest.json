@@ -1,0 +1,24 @@
+{
+  "model_name": "SnapLab-V3-65Class-NPU",
+  "model_path": "models\\snaplab_v3_65class_npu\\job_jp2r0zz6g_optimized_onnx\\model.onnx",
+  "external_data_path": "models\\snaplab_v3_65class_npu\\job_jp2r0zz6g_optimized_onnx\\model.data",
+  "device": "Snapdragon X Elite CRD",
+  "compute_unit": "NPU",
+  "runtime": "ONNX",
+  "input_name": "images",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_name": "output_0",
+  "output_shape": [
+    1,
+    69,
+    8400
+  ],
+  "classes": 65,
+  "compile_job": "jp2r0zz6g",
+  "profile_job": "j568e09ng"
+}

@@ -1,0 +1,31 @@
+{
+    "model": {
+        "name": "Intern3.5-VL-2B",
+        "bundle": "intern3_5_vl_2b-geniex_qairt-w4a16-qualcomm_snapdragon_x_elite",
+        "precision": "w4a16"
+    },
+    "runtime": {
+        "backend": "geniex_qairt",
+        "execution": "NPU",
+        "framework": "GenieX",
+        "qairt": "2.45.0.260326154327"
+    },
+    "target": {
+        "device": "Snapdragon X Elite CRD",
+        "chipset": "qualcomm-snapdragon-x-elite",
+        "soc": "sc8380xp",
+        "htp": "v73",
+        "architecture": "ARM64",
+        "operating_system": "Windows"
+    },
+    "vision": {
+        "input_width": 448,
+        "input_height": 448,
+        "context_length": 4096
+    },
+    "development_host": {
+        "architecture": "AMD64",
+        "qualcomm_vlm_execution": false,
+        "reason": "GenieX QAIRT VLM execution requires a supported Snapdragon ARM64 host."
+    }
+}

@@ -1,0 +1,39 @@
+# Environment variables and API keys (CRITICAL: Never commit secrets)
+.env
+.env.*
+
+# Python bytecode and logs
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.log
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Large datasets (4.3 GB - local training data only)
+datasets/
+
+# Qualcomm Snapdragon QAIRT bundle (2.7 GB - NPU on-device hardware only)
+intern3_5_vl_2b-*/
+
+# Local benchmark artifacts and heavy unused models
+models/resnet50.pt
+models/resnet50_int8/
+models/resnet50_xelite/
+models/source_inference_dataset/
+models/source_inference_logs/
+
+# Training runs & debug images (best.pt is safely copied to models/best.pt)
+runs/
+
+# Local Gradio state
+.gradio/
+
+# Cloud deployment: exclude hardware-specific and validation artifacts
+models/snaplab_v3_65class_npu/
+models/validation/
+benchmarks/v3_npu_profile.json
