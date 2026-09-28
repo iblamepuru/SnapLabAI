@@ -1,0 +1,81 @@
+{
+  "project": "SnapLab-AI",
+  "model": "ResNet50",
+  "input_shape": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "benchmark_data": {
+    "cpu_fp32": {
+      "device": "CPU",
+      "runtime": "ONNX Runtime",
+      "latency_ms_mean": 103.711,
+      "latency_ms_median": 104.839,
+      "latency_ms_min": 90.165,
+      "latency_ms_max": 121.396
+    },
+    "snapdragon_fp32_source": {
+      "device": "Snapdragon X Elite CRD",
+      "runtime": "Qualcomm AI Hub",
+      "latency_ms": 1.83,
+      "peak_memory_bytes": 81137664
+    },
+    "snapdragon_fp32_compiled": {
+      "device": "Snapdragon X Elite CRD",
+      "runtime": "Qualcomm AI Hub",
+      "latency_ms": 1.822,
+      "peak_memory_bytes": 81088512,
+      "inference_memory_peak_bytes": 51978240
+    },
+    "snapdragon_int8": {
+      "device": "Snapdragon X Elite CRD",
+      "runtime": "Qualcomm AI Hub / NPU",
+      "graph_latency_ms": 0.623,
+      "htp_time_ms": 0.837,
+      "estimated_inference_time_ms": 0.632,
+      "estimated_peak_memory_bytes": 54710272,
+      "htp_utilization_percent": 98.98709045870463,
+      "throughput_inferences_per_second": 1194.7431302270013,
+      "peak_vtcm_bytes": 6443008,
+      "dram_read_bytes": 25950208,
+      "dram_write_bytes": 65536,
+      "qnn_nodes": 83,
+      "htp_nodes": 1357
+    }
+  },
+  "accuracy_consistency": {
+    "validation_samples": 10,
+    "top1_agreement_percent": 100.0,
+    "mean_cosine_similarity": 0.984511,
+    "min_cosine_similarity": 0.981792,
+    "mean_absolute_error": 0.128583,
+    "max_absolute_error": 1.902882,
+    "note": "Prediction consistency test on synthetic inputs; not ImageNet accuracy."
+  },
+  "performance_comparison": {
+    "cpu_to_int8_speedup": 166.47030497592294,
+    "compiled_to_int8_latency_reduction_percent": 65.80680570801317,
+    "source_to_compiled_latency_reduction_percent": 0.43715846994535346,
+    "fp32_to_int8_memory_reduction_percent": 32.57105356151244,
+    "int8_graph_latency_ms": 0.623,
+    "int8_htp_time_ms": 0.837,
+    "int8_htp_utilization_percent": 98.98709045870463,
+    "int8_throughput_inf_per_s": 1194.7431302270013,
+    "top1_agreement_percent": 100.0,
+    "mean_cosine_similarity": 0.984511
+  },
+  "engineering_recommendation": {
+    "decision": "RECOMMEND INT8",
+    "confidence": "HIGH",
+    "reasons": [
+      "INT8 reduces compiled-FP32 latency by 65.81%.",
+      "INT8 reduces estimated peak memory by 32.57%.",
+      "HTP utilization is very high at 98.99%.",
+      "Prediction consistency is strong: 100.00% Top-1 agreement and 0.984511 mean cosine similarity."
+    ],
+    "warnings": [],
+    "action": "Deploy the INT8 model on the Snapdragon NPU. Continue monitoring accuracy with labeled real-world validation data before production deployment."
+  }
+}
