@@ -37,3 +37,6 @@ runs/
 models/snaplab_v3_65class_npu/
 models/validation/
 benchmarks/v3_npu_profile.json
+
+# Local Netlify folder
+.netlify

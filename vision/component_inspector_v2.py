@@ -1057,7 +1057,7 @@ def render_top_header_html():
         badge_class = "badge-snapdragon-online"
         badge_icon = "⚡"
 
-    logo_html = f'<img src="{SNAPDRAGON_LOGO_B64}" class="header-snapdragon-logo" alt="Snapdragon Logo" />' if SNAPDRAGON_LOGO_B64 else """
+    logo_html = f'<img src="{SNAPDRAGON_LOGO_B64}" class="header-snapdragon-logo" alt="Snapdragon Logo" style="height: 38px !important; max-height: 38px !important; width: auto !important; max-width: 140px !important; object-fit: contain !important; display: inline-block !important; border-radius: 6px; padding: 2px 6px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.25);" height="38" />' if SNAPDRAGON_LOGO_B64 else """
             <div class="brand-icon">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5">
                     <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -1075,9 +1075,9 @@ def render_top_header_html():
             """
 
     return f"""
-    <div class="snaplab-header">
-        <div class="header-left">
-            <div class="brand-logo-container">
+    <div class="snaplab-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; background-color: #0F172A !important; border-bottom: 1px solid #1E293B !important; padding: 10px 20px !important; margin-bottom: 12px !important; border-radius: 0 0 10px 10px !important;">
+        <div class="header-left" style="display: flex !important; align-items: center !important; gap: 12px !important;">
+            <div class="brand-logo-container" style="display: flex !important; align-items: center !important;">
                 {logo_html}
             </div>
             <div class="brand-titles">
@@ -1108,40 +1108,40 @@ def render_vlm_banner_html():
     msg_title = "Snapdragon X Elite — Qualcomm On-Device VLM Active"
     msg_sub = "Hexagon NPU (45 TOPS) delivering real-time visual-language reasoning & circuit intelligence."
 
-    chip_img_html = f'<img src="{SNAPDRAGON_CHIP_B64}" class="snapdragon-chip-img" alt="Snapdragon X Elite Chip" />' if SNAPDRAGON_CHIP_B64 else '<div class="chip-fallback-icon">⚡</div>'
-    logo_img_html = f'<img src="{SNAPDRAGON_LOGO_B64}" class="lite-brand-logo" alt="Snapdragon Logo" />' if SNAPDRAGON_LOGO_B64 else ''
+    chip_img_html = f'<img src="{SNAPDRAGON_CHIP_B64}" class="snapdragon-chip-img" alt="Snapdragon X Elite Chip" style="width: 145px !important; max-width: 145px !important; height: 105px !important; max-height: 105px !important; object-fit: cover !important; border-radius: 6px !important; display: block !important;" width="145" height="105" />' if SNAPDRAGON_CHIP_B64 else '<div class="chip-fallback-icon">⚡</div>'
+    logo_img_html = f'<img src="{SNAPDRAGON_LOGO_B64}" class="lite-brand-logo" alt="Snapdragon Logo" style="height: 24px !important; max-height: 24px !important; width: auto !important; max-width: 100px !important; object-fit: contain !important; border-radius: 4px !important; background: #FFFFFF !important; padding: 2px 4px !important; border: 1px solid #E2E8F0 !important; display: inline-block !important;" height="24" />' if SNAPDRAGON_LOGO_B64 else ''
 
     return f"""
-    <div class="snapdragon-lite-card">
-        <div class="lite-card-left">
-            <div class="lite-chip-frame">
+    <div class="snapdragon-lite-card" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 20px !important; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 100%) !important; border: 1px solid rgba(56, 189, 248, 0.35) !important; border-radius: 12px !important; padding: 16px 20px !important; margin-bottom: 16px !important; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(34, 211, 238, 0.08) !important;">
+        <div class="lite-card-left" style="flex-shrink: 0 !important;">
+            <div class="lite-chip-frame" style="width: 145px !important; max-width: 145px !important; height: 105px !important; max-height: 105px !important; overflow: hidden !important; background: rgba(10, 16, 31, 0.9) !important; border: 1px solid rgba(56, 189, 248, 0.3) !important; border-radius: 10px !important; padding: 6px !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;">
                 {chip_img_html}
             </div>
         </div>
-        <div class="lite-card-body">
-            <div class="lite-card-header">
+        <div class="lite-card-body" style="flex: 1 !important; display: flex !important; flex-direction: column !important; gap: 6px !important;">
+            <div class="lite-card-header" style="display: flex !important; align-items: center !important; gap: 10px !important; margin-bottom: 2px !important;">
                 {logo_img_html}
-                <span class="lite-badge-pill">⚡ 45 TOPS NPU</span>
-                <span class="lite-badge-pill active">✓ Local Inference</span>
+                <span class="lite-badge-pill" style="background: rgba(30, 41, 59, 0.8) !important; border: 1px solid rgba(56, 78, 114, 0.4) !important; color: #CBD5E1 !important;">⚡ 45 TOPS NPU</span>
+                <span class="lite-badge-pill active" style="background: rgba(16, 185, 129, 0.15) !important; border: 1px solid rgba(16, 185, 129, 0.4) !important; color: #34D399 !important;">✓ Local Inference</span>
             </div>
-            <div class="lite-card-title">{msg_title}</div>
-            <div class="lite-card-sub">{msg_sub}</div>
-            <div class="lite-card-stats">
+            <div class="lite-card-title" style="color: #F8FAFC !important; font-size: 16px !important; font-weight: 700 !important; letter-spacing: -0.2px !important;">{msg_title}</div>
+            <div class="lite-card-sub" style="color: #94A3B8 !important; font-size: 12px !important; line-height: 1.4 !important; font-weight: 500 !important;">{msg_sub}</div>
+            <div class="lite-card-stats" style="display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 12px !important; margin-top: 6px !important; padding-top: 8px !important; border-top: 1px dashed rgba(56, 78, 114, 0.4) !important;">
                 <div class="lite-stat-item">
-                    <span class="lite-stat-label">Platform</span>
-                    <span class="lite-stat-val">Snapdragon X Elite</span>
+                    <span class="lite-stat-label" style="color: #64748B !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important;">Platform</span>
+                    <span class="lite-stat-val" style="color: #38BDF8 !important; font-size: 11px !important; font-weight: 700 !important;">Snapdragon X Elite</span>
                 </div>
                 <div class="lite-stat-item">
-                    <span class="lite-stat-label">Neural Engine</span>
-                    <span class="lite-stat-val">Qualcomm Hexagon NPU</span>
+                    <span class="lite-stat-label" style="color: #64748B !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important;">Neural Engine</span>
+                    <span class="lite-stat-val" style="color: #38BDF8 !important; font-size: 11px !important; font-weight: 700 !important;">Qualcomm Hexagon NPU</span>
                 </div>
                 <div class="lite-stat-item">
-                    <span class="lite-stat-label">Vision Model</span>
-                    <span class="lite-stat-val">InternVL2-2B (W4A16 QAIRT)</span>
+                    <span class="lite-stat-label" style="color: #64748B !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important;">Vision Model</span>
+                    <span class="lite-stat-val" style="color: #38BDF8 !important; font-size: 11px !important; font-weight: 700 !important;">InternVL2-2B (W4A16 QAIRT)</span>
                 </div>
                 <div class="lite-stat-item">
-                    <span class="lite-stat-label">Execution Mode</span>
-                    <span class="lite-stat-val">Zero-Cloud On-Device</span>
+                    <span class="lite-stat-label" style="color: #64748B !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important;">Execution Mode</span>
+                    <span class="lite-stat-val" style="color: #10B981 !important; font-size: 11px !important; font-weight: 700 !important;">Zero-Cloud On-Device</span>
                 </div>
             </div>
         </div>
@@ -3356,17 +3356,28 @@ body, .gradio-container {
 
 /* Header Logo & Navigation Styling */
 .header-snapdragon-logo {
-    height: 38px;
-    object-fit: contain;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    background: #FFFFFF;
-    padding: 2px 6px;
+    height: 38px !important;
+    max-height: 38px !important;
+    width: auto !important;
+    max-width: 140px !important;
+    object-fit: contain !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+    background: #FFFFFF !important;
+    padding: 2px 6px !important;
+    display: inline-block !important;
 }
 
 .brand-logo-container {
     display: flex;
     align-items: center;
+}
+
+.brand-logo-container img,
+.snaplab-header img {
+    max-height: 38px !important;
+    width: auto !important;
+    object-fit: contain !important;
 }
 
 .nav-links {
@@ -3386,43 +3397,49 @@ body, .gradio-container {
     border-bottom: 2px solid #3B82F6;
 }
 
-/* Snapdragon X Elite Light Background Showcase Card */
+/* Snapdragon X Elite Showcase Card */
 .snapdragon-lite-card {
-    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #E2E8F0 100%);
-    border: 1px solid #CBD5E1;
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 100%) !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important;
+    margin-bottom: 16px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 20px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(34, 211, 238, 0.08) !important;
 }
 
 .lite-card-left {
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
 }
 
 .lite-chip-frame {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
-    padding: 6px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 145px;
-    height: 105px;
-    overflow: hidden;
+    background: rgba(10, 16, 31, 0.9) !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    border-radius: 10px !important;
+    padding: 6px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 145px !important;
+    max-width: 145px !important;
+    height: 105px !important;
+    max-height: 105px !important;
+    overflow: hidden !important;
 }
 
 .snapdragon-chip-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 6px;
-    transition: transform 0.3s ease;
+    width: 145px !important;
+    max-width: 145px !important;
+    height: 105px !important;
+    max-height: 105px !important;
+    object-fit: cover !important;
+    border-radius: 6px !important;
+    transition: transform 0.3s ease !important;
+    display: block !important;
 }
 
 .snapdragon-chip-img:hover {
@@ -3434,32 +3451,43 @@ body, .gradio-container {
 }
 
 .lite-card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
 }
 
 .lite-card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 2px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 2px !important;
 }
 
 .lite-brand-logo {
-    height: 24px;
-    object-fit: contain;
-    border-radius: 4px;
-    background: #FFFFFF;
-    padding: 2px 4px;
-    border: 1px solid #E2E8F0;
+    height: 24px !important;
+    max-height: 24px !important;
+    width: auto !important;
+    max-width: 100px !important;
+    object-fit: contain !important;
+    border-radius: 4px !important;
+    background: #FFFFFF !important;
+    padding: 2px 4px !important;
+    border: 1px solid #E2E8F0 !important;
+    display: inline-block !important;
+}
+
+.lite-card-header img {
+    height: 24px !important;
+    max-height: 24px !important;
+    width: auto !important;
+    object-fit: contain !important;
 }
 
 .lite-badge-pill {
-    background-color: #F1F5F9;
-    border: 1px solid #CBD5E1;
-    color: #334155;
+    background-color: rgba(30, 41, 59, 0.8) !important;
+    border: 1px solid rgba(56, 78, 114, 0.4) !important;
+    color: #CBD5E1 !important;
     font-size: 11px;
     font-weight: 600;
     padding: 2px 9px;
@@ -3467,21 +3495,21 @@ body, .gradio-container {
 }
 
 .lite-badge-pill.active {
-    background-color: #ECFDF5;
-    border: 1px solid #A7F3D0;
-    color: #047857;
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    color: #34D399 !important;
 }
 
 .lite-card-title {
     font-size: 16px;
     font-weight: 700;
-    color: #0F172A;
+    color: #F8FAFC !important;
     letter-spacing: -0.2px;
 }
 
 .lite-card-sub {
     font-size: 12px;
-    color: #334155;
+    color: #94A3B8 !important;
     line-height: 1.4;
     font-weight: 500;
 }
@@ -3492,7 +3520,7 @@ body, .gradio-container {
     gap: 12px;
     margin-top: 6px;
     padding-top: 8px;
-    border-top: 1px dashed #CBD5E1;
+    border-top: 1px dashed rgba(56, 78, 114, 0.4) !important;
 }
 
 .lite-stat-item {
@@ -3505,13 +3533,13 @@ body, .gradio-container {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #64748B;
+    color: #64748B !important;
 }
 
 .lite-stat-val {
     font-size: 11px;
     font-weight: 700;
-    color: #0F172A;
+    color: #38BDF8 !important;
 }
 
 /* VLM Banner Fallback */
@@ -4429,9 +4457,11 @@ body, .gradio-container {
 # ==============================================================================
 
 with gr.Blocks(
-    title="SnapLab AI — On-Device Engineering Copilot for Snapdragon AI PCs",
-    css=CUSTOM_CSS
+    title="SnapLab AI — On-Device Engineering Copilot for Snapdragon AI PCs"
 ) as demo:
+
+    # Direct DOM CSS injection to guarantee styling in Gradio 4/5/6 and Modal FastAPI mount
+    gr.HTML(f"<style>{CUSTOM_CSS}</style>", visible=False)
 
     # Global state objects
     all_components_state = gr.State([])

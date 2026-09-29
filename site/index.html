@@ -57,6 +57,11 @@
       padding: 0;
     }
 
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
     html {
       scroll-behavior: smooth;
       color-scheme: dark;
@@ -120,9 +125,11 @@
     }
 
     .brand-logo-img {
-      height: 34px;
-      width: auto;
-      object-fit: contain;
+      height: 34px !important;
+      max-height: 34px !important;
+      width: auto !important;
+      max-width: 140px !important;
+      object-fit: contain !important;
     }
 
     .brand-text {
@@ -1380,7 +1387,7 @@
   <header class="site-header">
     <div class="container nav-wrapper">
       <div class="brand-group">
-        <img src="assets/snapdragon_logo.png" alt="Qualcomm Snapdragon Logo" class="brand-logo-img">
+        <img src="assets/snapdragon_logo.png" alt="Qualcomm Snapdragon Logo" class="brand-logo-img" height="34" style="height: 34px; max-height: 34px; width: auto; object-fit: contain;">
         <a href="#home" class="brand-text">SnapLab<span class="gradient">AI</span></a>
         <span class="brand-badge">NPU Core</span>
       </div>

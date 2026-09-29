@@ -20,7 +20,7 @@ print(
 )
 
 # Import the flagship Gradio application
-from vision.component_inspector_v2 import demo
+from vision.component_inspector_v2 import demo, CUSTOM_CSS
 
 print(
     "[SnapLab AI] Components loaded successfully! Starting web server...",
@@ -30,6 +30,11 @@ print(
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 7860))
 
+    # On Render/cloud, bind to 0.0.0.0; for local development, default to 127.0.0.1
+    # so clicking the printed URL opens properly in Windows browsers without ERR_ADDRESS_INVALID.
+    default_host = "0.0.0.0" if os.environ.get("RENDER") else "127.0.0.1"
+    server_name = os.environ.get("SERVER_NAME", default_host)
+
     # Disable Gradio's public share tunnel by default
     share = os.environ.get("SHARE", "false").lower() in (
         "true",
@@ -38,13 +43,18 @@ if __name__ == "__main__":
     )
 
     print(
-        f"\n[SnapLab AI] Launching on port {port} (share={share})\n",
+        f"\n[SnapLab AI] Launching on {server_name}:{port} (share={share})",
+        flush=True,
+    )
+    print(
+        f"[SnapLab AI] Open in browser: http://localhost:{port} or http://127.0.0.1:{port}\n",
         flush=True,
     )
 
     demo.launch(
-        server_name="0.0.0.0",
+        server_name=server_name,
         server_port=port,
         share=share,
         inbrowser=False,
+        css=CUSTOM_CSS,
     )
