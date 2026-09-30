@@ -14,6 +14,12 @@
 
 <br/>
 
+### 🎬 **[WATCH THE DEMO VIDEO](https://drive.google.com/file/d/1VlZoBYtdPy1PmuLncKWvK5xN16OaHKd7/view?usp=sharing)**
+
+[![Watch Demo Video](https://img.shields.io/badge/%F0%9F%8E%AC%20WATCH%20DEMO%20VIDEO-Google%20Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1VlZoBYtdPy1PmuLncKWvK5xN16OaHKd7/view?usp=sharing)
+
+<br/>
+
 ---
 
 ### 🧰 Tech Stack
@@ -615,6 +621,6 @@ Every image and screenshot provided in [`docs/userguide_images/`](docs/userguide
 
 **SnapLab AI** — Visual Hardware Intelligence for Snapdragon AI PCs.
 
-[🌐 Live Project](https://iblamepuru--snaplab-ai-web.modal.run/) · [📘 User Guide](userguide.md) · [💻 GitHub Repository](https://github.com/iblamepuru/SnapLabAI)
+[🌐 Live Project](https://iblamepuru--snaplab-ai-web.modal.run/) · [🎬 Demo Video](https://drive.google.com/file/d/1VlZoBYtdPy1PmuLncKWvK5xN16OaHKd7/view?usp=sharing) · [📘 User Guide](userguide.md) · [💻 GitHub Repository](https://github.com/iblamepuru/SnapLabAI)
 
 </div>
