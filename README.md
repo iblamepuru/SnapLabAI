@@ -1,339 +1,427 @@
-<p align="center">
-  <img src="asset/banner.png" alt="SnapLab-AI banner" width="100%"/>
-</p>
+<div align="center">
 
-<h1 align="center">🔬 SnapLab-AI</h1>
-<p align="center"><b>Snap a photo of any electronics project → get detected components, wiring topology and an AI engineering report — running on the Snapdragon NPU.</b></p>
+# ⚡ SnapLab AI
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/YOLO11n-Detection-00FFFF?logo=yolo&logoColor=black"/>
-  <img src="https://img.shields.io/badge/MobileNet-Refinement-FF6F00?logo=tensorflow&logoColor=white"/>
-  <img src="https://img.shields.io/badge/ResNet50-INT8-8A2BE2"/>
-  <img src="https://img.shields.io/badge/Qualcomm%20AI%20Hub-Snapdragon%20X%20Elite-3253DC?logo=qualcomm&logoColor=white"/>
-  <img src="https://img.shields.io/badge/ONNX%20Runtime-CPU%20baseline-005CED?logo=onnx&logoColor=white"/>
-  <img src="https://img.shields.io/badge/OpenAI-Reasoning-412991?logo=openai&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Gradio-UI-F97316?logo=gradio&logoColor=white"/>
-</p>
+### Real-Time On-Device Engineering Copilot for Snapdragon AI PCs
 
----
+**Photograph a circuit. Get a component inventory, spatial and wiring evidence, a connection graph and an explainable engineering report.**
 
-## ⚡ At a Glance
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Modal-orange?style=for-the-badge)](https://iblamepuru--snaplab-ai-web.modal.run/)
+[![Python](https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python&logoColor=white)](#-installation)
+[![YOLO11n](https://img.shields.io/badge/Detector-YOLO11n-purple?style=for-the-badge)](#-computer-vision-pipeline)
+[![Snapdragon](https://img.shields.io/badge/Qualcomm-Snapdragon%20X%20Elite-red?style=for-the-badge)](#-qualcomm-snapdragon--npu)
+[![Gradio](https://img.shields.io/badge/UI-Gradio-f97316?style=for-the-badge)](#-using-the-web-app)
 
-| 🧠 Models | 🛠️ Core Tools | 📦 Dataset | 🚀 Headline Result |
-|:--|:--|:--|:--|
-| **YOLO11n** — component detection<br>**MobileNet** — crop-level class refinement<br>**ResNet50** — on-device NPU benchmark model<br>**OpenAI LLM / VLM** — engineering reasoning | Qualcomm AI Hub · Snapdragon X Elite NPU (HTP / QNN) · ONNX Runtime · Ultralytics · PyTorch · OpenCV · Gradio | **17,024 images** across **65 component classes**<br>split into train / val / test | **0.623 ms** INT8 latency<br>**166× faster** than CPU<br>**1,194 inferences / sec** |
+**🌐 Live website:** https://iblamepuru--snaplab-ai-web.modal.run/
+**📘 User guide:** [`userguide.md`](userguide.md)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/NPU%20latency-0.623%20ms-22d3ee?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Speedup-166%C3%97%20vs%20CPU-10b981?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/HTP%20utilization-98.99%25-3b82f6?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Memory-%E2%86%93%2032.6%25-f59e0b?style=for-the-badge"/>
-</p>
+![SnapLab AI analysis results](docs/screenshots/analysis_results.jpg)
+
+</div>
 
 ---
 
 ## 📑 Table of Contents
-- [The Problem](#-the-problem)
-- [What SnapLab-AI Does](#-what-snaplab-ai-does)
-- [Demo](#-demo)
-- [How It Works](#-how-it-works)
-- [Models & Tools](#-models--tools)
+
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [System Architecture](#-system-architecture)
+- [Computer Vision Pipeline](#-computer-vision-pipeline)
+- [Circuit Intelligence](#-circuit-intelligence)
+- [Evidence & Explainability](#-evidence--explainability)
+- [Qualcomm Snapdragon & NPU](#-qualcomm-snapdragon--npu)
 - [Dataset](#-dataset)
-- [Benchmarks on Snapdragon](#-benchmarks-on-snapdragon)
-- [Engineering Copilot](#-engineering-copilot)
+- [Screenshots](#-screenshots)
+- [Installation](#-installation)
+- [Using the Web App](#-using-the-web-app)
+- [Deployment](#-deployment)
 - [Project Structure](#-project-structure)
-- [Quick Start](#-quick-start)
+- [Configuration & Security](#-configuration--security)
+- [Limitations](#-limitations)
 - [Roadmap](#-roadmap)
 
 ---
 
-## ❓ The Problem
+## 🔍 Overview
 
-Students, hobbyists and lab instructors constantly deal with breadboards and dev boards where nobody is sure **what is on the board, how it is wired, or why it doesn't work**. Debugging means manually identifying every part and tracing every jumper. Cloud AI tools are slow, need connectivity, and send lab images off-device.
+Reading a circuit from a photo means identifying every part, tracing wires, working out which components interact and looking up datasheets. That work is slow, especially for students and for engineers facing unfamiliar hardware.
 
-## 💡 What SnapLab-AI Does
-
-> **Upload one or more photos of a circuit → SnapLab-AI identifies every component, maps how they sit and connect, and writes an engineering report you can question in plain English.**
-
-| | Capability | Where it lives |
-|:-:|:--|:--|
-| 🎯 | **Detects components** (e.g. `Resistor`, `LED-Light`, `Arduino-Uno`) with YOLO11n | `yolo11n.pt`, `vision/` |
-| 🔍 | **Refines each crop** with a MobileNet classifier to fix low-confidence YOLO labels | `vision/` |
-| 📐 | **Spatial reasoning** — `LEFT_OF`, `RIGHT_OF`, `ABOVE`, `BELOW`, `NEAR` between every pair | `spatial_engine.py` |
-| 🔌 | **Wire association** — links detected wires to the components they touch | `wire_association.py` |
-| 🕸️ | **Connection graph** — builds the circuit topology from spatial + wire evidence | `connection_engine.py`, `connection_graph.py` |
-| 🖼️ | **Multi-image sessions** with a unified inventory and strict *no cross-image wiring* guardrail | `implementation_plan.md` |
-| 🧾 | **Engineering report** combining all evidence, reasoned by an LLM | `engineering_report.py`, `engineering_analyzer.py` |
-| ⚙️ | **On-device NPU deployment** on Snapdragon X Elite via Qualcomm AI Hub (INT8) | `snapdragon_executor.py`, `benchmarks/` |
-| 💬 | **Engineering Copilot** — ask *"Should I deploy INT8?"* and get an evidence-backed answer | `copilot_app.py`, `copilot_reasoning.py` |
-
----
-
-## 🎬 Demo
-
-<!-- 👉 Visual demonstration images in /asset -->
-<p align="center">
-  <img src="asset/demo_detection.png" alt="Component detection with bounding boxes" width="48%"/>
-  &nbsp;
-  <img src="asset/demo_copilot.png" alt="Engineering Copilot dashboard" width="48%"/>
-</p>
-<p align="center"><i>Left: YOLO11n + MobileNet detections on a breadboard. Right: the Engineering Copilot dashboard with live NPU KPIs.</i></p>
-
-<details>
-<summary><b>📄 Sample report output (click to expand)</b></summary>
+**SnapLab AI** is an AI-assisted visual engineering analysis platform. It turns one or more photographs of electronic components or circuit setups into:
 
 ```text
-## 📊 Combined Multi-Image Engineering Report
-Images processed : 2
-Total detections : 9
-
-| Component Class | Total Detections | Appearing In Images |
-|-----------------|------------------|---------------------|
-| Resistor        | 4                | Image 1, Image 2    |
-| LED-Light       | 3                | Image 1             |
-| Arduino-Uno     | 2                | Image 1, Image 2    |
-
-ID 1 (Resistor) -> ID 2 (LED-Light) | Distance: 100.0 px | RIGHT_OF, NEAR
-
-⚠ Components across different images are NOT inferred to be physically connected.
+COMPONENT INVENTORY  +  SPATIAL UNDERSTANDING  +  WIRE / CIRCUIT RELATIONSHIPS
+                     +  ENGINEERING INTERPRETATION  +  EXPLAINABLE REPORT
 ```
-</details>
+
+Every result carries its level of evidence, so users can see what was **observed**, **predicted**, **inferred**, **recommended** or **still unresolved**.
+
+> ⚠️ SnapLab AI reasons from images. It is **not** a multimeter, oscilloscope or electrical verification system, and it cannot prove continuity from a photo. Verify important conclusions physically.
 
 ---
 
-## 🧩 How It Works
+## ✨ Key Features
+
+| Area | What SnapLab AI does |
+|---|---|
+| 🎯 **Detection** | YOLO11n detects electronic components across a 65-class electronics taxonomy |
+| 🔬 **Refinement** | MobileNet classifier re-checks each crop; YOLO, refined and final labels are kept separately |
+| 📋 **Inventory** | Structured records with image ID, component ID, bounding box, confidence, source and category |
+| 📐 **Spatial reasoning** | LEFT_OF / RIGHT_OF / ABOVE / BELOW / NEAR relationships and pixel distances |
+| 🧵 **Wire analysis** | Wire detection, endpoint identification and wire-to-component association |
+| 🕸️ **Connection graph** | Evidence-tiered graph of candidate connections per image |
+| 🖼️ **Multi-image analysis** | Several photos per session, with a strict no-cross-image-wiring guardrail |
+| 📚 **Engineering knowledge** | Component roles, pin/terminal guidance, category information and safety notes |
+| ✅ **Circuit Verification & DRC** | Rule-based findings with reason, evidence, affected parts and suggested checks |
+| 🧠 **VLM / LLM reasoning** | InternVL-class vision-language model and optional Groq/OpenAI engineering reasoning |
+| 🔎 **Explainability** | Evidence broken into visual, model, geometric, wire, knowledge, reasoning and unresolved layers |
+| 🤖 **Engineering Copilot** | Answers questions about benchmark and deployment evidence from `engineering_report.json` |
+| ⚡ **Edge AI** | Qualcomm AI Hub workflow targeting Snapdragon X Elite (HTP / QNN, INT8) |
+
+---
+
+## 🏗️ System Architecture
 
 ```mermaid
-flowchart LR
-    A[📷 Upload 1..N images] --> B[🎯 YOLO11n<br/>component detection]
-    B --> C[🔍 MobileNet<br/>crop refinement]
-    C --> D[🏷️ Tagged inventory<br/>image_id · component_id · bbox]
-    D --> E[📐 Spatial engine]
-    D --> F[🔌 Wire association]
-    E --> G[🕸️ Connection graph<br/>per image, isolated]
+flowchart TD
+    A["📷 Input image(s)"] --> B[YOLO11n detection]
+    B --> C[MobileNet refinement]
+    C --> D[Component inventory]
+    D --> E[Spatial analysis]
+    D --> F[Wire detection]
+    E --> G[Wire association]
     F --> G
-    G --> H[🧠 OpenAI reasoning<br/>multi-image evidence]
-    H --> I[🧾 Engineering report]
-    I --> J[💬 Copilot Q&A]
-
-    subgraph NPU[⚡ Snapdragon X Elite NPU]
-      K[ResNet50 → ONNX → Qualcomm AI Hub → INT8]
-    end
-    K -. benchmark data .-> J
+    G --> H[Connection engine]
+    H --> I[Connection graph]
+    I --> J[Engineering knowledge & DRC]
+    J --> K[VLM / LLM reasoning]
+    J --> L[Engineering report]
+    K --> M["🖥️ Gradio web app & Copilot"]
+    L --> M
 ```
 
-<details>
-<summary><b>🔎 Pipeline deep-dive</b></summary>
-
-1. **Detection** — every uploaded image goes through YOLO11n. Each detection is tagged with `image_id`, `component_id` (`img{n}_c{track_id}`), bounding box, class and confidence.
-2. **Refinement** — each crop is re-classified by MobileNet; the final label records its `source` (YOLO or refined) so the report stays traceable.
-3. **Spatial relations** — `SpatialRelationshipEngine` computes pairwise distance and direction; pairs within 150 px are marked `NEAR`.
-4. **Wiring** — wire detections are associated with component boxes to produce candidate connections.
-5. **Isolation guardrail** — spatial pairs, wire traces and graph edges are partitioned by `image_id`, so two photos are never "wired together" by mistake.
-6. **Reasoning** — the aggregated evidence (inventory, class frequency, per-image evidence, VLM findings) is sent to the reasoning engine, which separates *total detections* from *unique physical parts*.
-7. **Resilience** — a corrupt image produces an inline error entry instead of crashing the session.
-</details>
+Each stage is a separate module, so it can be tested, improved or disabled on its own. Optional services such as the VLM and LLM fail gracefully and do not stop the base detector.
 
 ---
 
-## 🧠 Models & Tools
+## 👁️ Computer Vision Pipeline
 
-| Layer | Model / Tool | Why we chose it |
-|:--|:--|:--|
-| Detection | **YOLO11n** (Ultralytics) | Nano-size, real-time, edge-friendly (94.2% mAP@50) |
-| Classification | **MobileNet** | Lightweight second opinion on each crop (94.87% accuracy) |
-| NPU benchmark | **ResNet50** (1×3×224×224) | Standard reference model to prove the deployment path |
-| Edge runtime | **Qualcomm AI Hub** → Snapdragon X Elite **NPU (HTP / QNN)** | Compile, quantize (INT8) and profile on real hardware |
-| CPU baseline | **ONNX Runtime** | Fair FP32 comparison point |
-| Reasoning | **OpenAI** LLM / VLM | Turns raw evidence into an engineering explanation |
-| Vision utils | **OpenCV**, **PyTorch** | Image I/O, crops, model export |
-| UI | **Gradio** | Multi-image upload, galleries, Copilot dashboard |
+### 1. Detection — YOLO11n
+Ultralytics YOLO11n (`models/best.pt`) locates components and returns class, confidence and bounding box.
 
----
+### 2. Refinement — MobileNet
+Each detection is cropped and re-classified by the component classifier (`models/component_classifier/best.pt`, classes in `classes.json`). The fusion engine compares both opinions:
 
-## 📦 Dataset
+| Status | Meaning |
+|---|---|
+| `REFINED` | Both models agree, or refinement is confident enough to update the label |
+| `UNCERTAIN` | The models disagree or refinement confidence is too low; the YOLO label is kept and flagged |
 
-The component classifier is trained on a custom dataset in `datasets/component_classifier/` with **train / val / test** splits across **65 electronics classes**.
+### 3. Inventory record
 
-| Split | Images |
-|:--|--:|
-| 🏋️ Train | **12,283** |
-| 🧪 Validation | **3,592** |
-| ✅ Test | **1,149** |
-| **Total** | **17,024** |
-
-<details>
-<summary><b>📊 Per-class distribution (click to expand)</b></summary>
-
-| Class | Train | Val | Test | Total |
-|:--|--:|--:|--:|--:|
-| Resistor | 651 | 141 | 18 | 810 |
-| Diode | 575 | 84 | 2 | 661 |
-| BJT-Transistor | 542 | 203 | 27 | 772 |
-| LED-Light | 426 | 11 | 0 | 437 |
-| Generic-Capacitor | 418 | 70 | 0 | 488 |
-| MOSFET | 382 | 200 | 21 | 603 |
-| Cable | 364 | 76 | 0 | 440 |
-| OP-Amp | 326 | 70 | 0 | 396 |
-| Variable-Resistor | 322 | 68 | 0 | 390 |
-| Push-Switch | 318 | 18 | 0 | 336 |
-| IC-Chip | 315 | 22 | 2 | 339 |
-| Inductor | 275 | 18 | 0 | 293 |
-| OLED-Display | 269 | 10 | 0 | 279 |
-| Buzzer | 254 | 18 | 0 | 272 |
-| MLC-Capacitor | 252 | 40 | 0 | 292 |
-| High-Voltage-Ceramic-Capacitor | 239 | 18 | 0 | 257 |
-| Bluetooth-Module | 232 | 17 | 0 | 249 |
-| Sonar-Sensor | 206 | 29 | 0 | 235 |
-| Gas-Sensor | 204 | 17 | 0 | 221 |
-| Breadboard | 196 | 32 | 20 | 248 |
-| Arduino-Uno | 196 | 23 | 1 | 220 |
-| Arduino-Mega | 196 | 29 | 19 | 244 |
-| ESP32 | 180 | 10 | 2 | 192 |
-| ESP32-CAM | 73 | 37 | 82 | 192 |
-| Servo-Motor | 160 | 11 | 3 | 174 |
-| Relay-Module | 158 | 45 | 25 | 228 |
-| DC-Motor | 51 | 31 | 89 | 171 |
-
-*65 total hardware classes covering microcontrollers, passives, semiconductors, modules, and sensors.*
-
-Reproduce these numbers any time with:
-```bash
-python check_dataset.py
+```json
+{
+  "component_id": "img1_c3",
+  "image_id": "img1",
+  "class_name": "ESP32-CAM",
+  "confidence": 0.998,
+  "bbox": [x1, y1, x2, y2],
+  "source": "MobileNet",
+  "status": "REFINED",
+  "engineering_category": "Embedded Vision Module"
+}
 ```
-</details>
 
 ---
 
-## 🚀 Benchmarks on Snapdragon
+## 🧩 Circuit Intelligence
 
-<p align="center">
-  <img src="asset/benchmark_chart.png" alt="Latency benchmark chart" width="90%"/>
-</p>
+| Stage | Output | Evidence type |
+|---|---|---|
+| Spatial engine | Relative positions, distances (NEAR ≈ 150 px) | Geometric inference |
+| Wire detector | Wire masks and endpoints | Visual segmentation |
+| Wire association | Wire ↔ component candidates | Heuristic |
+| Connection engine | Candidate edges with reasons | Inferred |
+| Engineering ontology | Plausible relationships (e.g. controller → actuator) | Domain knowledge |
 
-| Configuration | Device | Runtime | Latency | Peak memory |
-|:--|:--|:--|--:|--:|
-| FP32 | CPU | ONNX Runtime | 103.711 ms (mean) | — |
-| FP32 source | Snapdragon X Elite CRD | Qualcomm AI Hub | 1.830 ms | 81.1 MB |
-| FP32 compiled | Snapdragon X Elite CRD | Qualcomm AI Hub | 1.822 ms | 81.1 MB |
-| **INT8** | **Snapdragon X Elite CRD** | **AI Hub / NPU** | **0.623 ms** | **54.7 MB** |
+![Connection graph](docs/screenshots/connection_graph.jpg)
 
-| 📈 Key result | Value |
-|:--|--:|
-| CPU → INT8 speedup | **166.5×** |
-| Compiled FP32 → INT8 latency reduction | **65.8 %** |
-| FP32 → INT8 memory reduction | **32.6 %** |
-| NPU (HTP) utilization | **98.99 %** |
-| Throughput | **1,194.7 inferences / s** |
-| Graph nodes on HTP | 1,357 |
+The connection graph draws three evidence tiers differently:
 
-<details>
-<summary><b>🎯 Accuracy consistency (FP32 vs INT8)</b></summary>
+- 🟡 **Directly observed**: verified contact visible in the image
+- 🔵 **Heuristic candidate**: possible wire path from segmentation
+- 🟣 **Ontology possibility**: plausible from engineering knowledge
+
+> `Spatial relation ≠ Electrical connection`
+
+### 🚫 No cross-image wiring
+Every detection keeps its `image_id`. Spatial relations, wire candidates and graph edges are computed **per image only**. The session report can aggregate inventories across photos, but it never creates a connection just because two parts appear in the same session. It also separates *total detections* from *unique physical components*.
+
+---
+
+## 🔎 Evidence & Explainability
+
+![Evidence and explainability panel](docs/screenshots/evidence_explainability.jpg)
+
+Each component can be inspected through these evidence layers:
+
+| Layer | Question it answers |
+|---|---|
+| **A. Direct visual evidence** | What is visibly present? |
+| **B. Model prediction** | What did YOLO11n and MobileNet predict? |
+| **C. Geometric inference** | What follows from coordinates and positions? |
+| **D. Wire evidence** | What did wire processing find? |
+| **E. Engineering knowledge** | What does the ontology suggest? |
+| **F. VLM / LLM reasoning** | What do higher-level models infer from the evidence? |
+| **G. Unresolved items** | What needs physical checking or a better photo? |
+
+Confidence values are model scores, not guarantees of correctness.
+
+---
+
+## ⚡ Qualcomm Snapdragon & NPU
+
+SnapLab AI includes a Qualcomm edge-AI workflow built with **Qualcomm AI Hub**, targeting the **Snapdragon X Elite CRD** (Hexagon HTP, QNN, INT8, ONNX / ONNX Runtime). The VLM subsystem uses an InternVL-class model bundle through the GenieX / QAIRT runtime.
+
+### ResNet50 NPU benchmark
+
+ResNet50 is used as a **standard benchmark model** to measure the Snapdragon NPU pipeline.
+
+| Configuration | Latency |
+|---|---:|
+| FP32 CPU (ONNX Runtime) | ~103.711 ms |
+| FP32 source on Snapdragon X Elite | ~1.830 ms |
+| FP32 compiled | ~1.822 ms |
+| **INT8 NPU** | **~0.623 ms** |
 
 | Metric | Value |
-|:--|--:|
+|---|---:|
+| CPU → INT8 speedup | ~166.5× |
+| Compiled FP32 → INT8 latency reduction | ~65.8% |
+| FP32 → INT8 memory reduction | ~32.6% |
+| HTP utilization | ~98.99% |
+| Throughput | ~1,194.7 inferences/s |
+| Graph nodes on HTP | 1,357 |
+
+### FP32 vs INT8 consistency check
+
+| Metric | Value |
+|---|---:|
 | Validation samples | 10 |
-| Top-1 agreement | 100 % |
+| Top-1 agreement | 100% |
 | Mean cosine similarity | 0.9845 |
-| Min cosine similarity | 0.9818 |
+| Minimum cosine similarity | 0.9818 |
 | Mean absolute error | 0.1286 |
 
-> ⚠️ **Honest note:** this is a prediction-consistency test on synthetic inputs, not ImageNet accuracy. Labeled real-world validation is the next step before production.
-</details>
+> 📌 These figures come from the documented ResNet50 benchmark setup (see `benchmark_results.json`). They are **not** the end-to-end latency of the SnapLab AI website. They also do not mean every YOLO inference runs on the NPU. The consistency check covers 10 samples and is not a full accuracy evaluation.
 
 ---
 
-## 💬 Engineering Copilot
+## 📊 Dataset
 
-`copilot_app.py` is a Gradio dashboard that loads `engineering_report.json` and shows live KPIs (NPU latency, throughput, HTP utilization, speedup, memory, Top-1 agreement) plus an automatic decision:
+A custom electronics dataset covering **65 component classes**, including resistors, capacitors, diodes, transistors, MOSFETs, LEDs, ICs, inductors, breadboards, Arduino and ESP32 boards, relay modules, sensors, motors, switches, displays, cables and communication modules.
 
-> ### ⚙️ Recommendation: **RECOMMEND INT8** — Confidence: **HIGH**
-> INT8 cuts latency by 65.81 %, memory by 32.57 %, runs the NPU at 98.99 % utilization, and keeps 100 % Top-1 agreement.
+| Split | Images |
+|---|---:|
+| Train | 12,283 |
+| Validation | 3,592 |
+| Test | 1,149 |
+| **Total** | **17,024** |
 
-Try asking it:
-- *"Should I deploy the INT8 model?"*
-- *"How much faster is the NPU than the CPU?"*
-- *"What are the risks of quantization here?"*
-
----
-
-## 🗂️ Project Structure
-
-<details>
-<summary><b>Click to expand</b></summary>
-
-```text
-SNAPLAB_AI/
-├── asset/                     # README images & screenshots
-├── assets/                    # Project showcase imagery & Qualcomm branding
-├── benchmarks/                # Qualcomm AI Hub profiling scripts/results
-├── vision/                    # Detection + refinement + OpenAI reasoning (Gradio app)
-├── app.py                     # Flagship circuit inspector launcher
-├── copilot_app.py             # Engineering Copilot dashboard (Gradio)
-├── copilot_reasoning.py       # Copilot Q&A logic
-├── spatial_engine.py          # Pairwise spatial relationships
-├── wire_association.py        # Wire ↔ component linking
-├── connection_engine.py       # Connection inference
-├── connection_graph.py        # Circuit topology graph
-├── engineering_analyzer.py    # Evidence aggregation
-├── engineering_report.py      # Report builder
-├── engineering_state.py       # Shared session state
-├── recommendation_engine.py   # INT8 vs FP32 decision logic
-├── performance_comparison.py  # Speedup / memory computation
-├── snapdragon_executor.py     # Snapdragon NPU execution
-├── create_resnet.py           # ResNet50 export
-├── test_inference.py          # Inference sanity test
-├── check_dataset.py           # Dataset split statistics
-├── benchmark_results.json     # Raw benchmark numbers
-├── engineering_report.json    # Report consumed by the Copilot
-└── yolo11n.pt                 # Detection weights
-```
-</details>
+Dataset tooling: `check_dataset.py`, `tools/prepare_stage1_dataset.py`, `tools/train_component_classifier.py`, `tools/evaluate_component_classifier.py`, `tools/preview_classifier_crops.py`.
+The dataset is kept local and is not committed to the repository.
 
 ---
 
-## 🏁 Quick Start
+## 🖼️ Screenshots
 
-```bash
-# 1. Clone
-git clone https://github.com/iblamepuru/SNAPLAB_AI.git
-cd SNAPLAB_AI
+| Component inventory & reasoning | Engineering report |
+|---|---|
+| ![Inventory](docs/screenshots/inventory_and_reasoning.jpg) | ![Report](docs/screenshots/engineering_report.jpg) |
 
-# 2. Setup Virtual Environment
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1  # Windows PowerShell
+| Multi-image comparison |
+|---|
+| ![Multi-image comparison](docs/screenshots/multi_image_comparison.jpg) |
 
-# 3. Install Dependencies
+More step-by-step screenshots are in [`docs/userguide_images/`](docs/userguide_images/).
+
+---
+
+## 🛠️ Installation
+
+### Prerequisites
+- Python 3 (check `requirements.txt` for the supported version)
+- Git
+- Model files: `models/best.pt`, `models/component_classifier/best.pt`, `models/component_classifier/classes.json`
+
+### Windows (PowerShell)
+
+```powershell
+git clone https://github.com/iblamepuru/SnapLabAI.git
+cd SnapLabAI
+
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+
 pip install -r requirements.txt
 
-# 4. Add your API key (never commit this file)
-echo "GROQ_API_KEY=your_key_here" > .env
+# Optional: API keys for LLM reasoning (never commit these)
+$env:GROQ_API_KEY = "your-key"
+$env:OPENAI_API_KEY = "your-key"
 
-# 5. Launch the Flagship Circuit Inspector
 python app.py
+```
 
-# 6. Launch the Engineering Copilot Dashboard
-python copilot_app.py
+### Linux / macOS
+
+```bash
+git clone https://github.com/iblamepuru/SnapLabAI.git
+cd SnapLabAI
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+Then open **http://127.0.0.1:7860**.
+
+---
+
+## 🖥️ Using the Web App
+
+1. Open the [live website](https://iblamepuru--snaplab-ai-web.modal.run/) or your local instance.
+2. **Upload** one or more circuit images (JPG, PNG, WEBP).
+3. Choose an **analysis mode**:
+   - **Component Identification**: identify parts only
+   - **Circuit Analysis**: add spatial, wire, connection and engineering reasoning
+4. Set **YOLO confidence**. A lower value gives more candidates and more false positives; a higher value gives fewer candidates and more missed parts.
+5. Toggle **MobileNet refinement** and the other analysis options (connections, engineering relationships, Qualcomm VLM, engineering reasoning).
+6. Click **Run Analysis**.
+7. Explore the result tabs: **Analysis Report**, **Connection Graph**, **Multi-Image Comparison**, **Evidence & Explainability**, **Component Specs & Datasets**, **Circuit Verification & DRC**, **Spatial Layout** and **Engineering Insights**.
+8. **Verify** important conclusions on the physical circuit.
+
+📘 The full walkthrough is in [`userguide.md`](userguide.md).
+
+---
+
+## ☁️ Deployment
+
+| Target | Entry point | Notes |
+|---|---|---|
+| Local | `python app.py` | Serves on `127.0.0.1:7860`; respects `PORT`, `SERVER_NAME`, `RENDER` |
+| Modal (cloud) | `modal_app.py` | Public site: https://iblamepuru--snaplab-ai-web.modal.run/ |
+| Snapdragon device | `snapdragon_executor.py`, `vision/snapdragon_npu_adapter.py` | Needs Snapdragon X Elite hardware and the Qualcomm runtime |
+
+```bash
+# Deploy to Modal
+modal deploy modal_app.py
+```
+
+> A standard cloud container does not provide the Snapdragon NPU. The on-device and cloud paths are separate.
+
+---
+
+## 📁 Project Structure
+
+```text
+SnapLabAI/
+├── app.py                          # Local launcher (imports vision.component_inspector_v2)
+├── modal_app.py                    # Modal cloud deployment
+├── index.html
+├── copilot_app.py                  # Engineering Copilot UI
+├── copilot_reasoning.py
+├── spatial_engine.py
+├── wire_association.py
+├── connection_engine.py
+├── connection_graph.py
+├── engineering_analyzer.py
+├── engineering_report.py
+├── engineering_state.py
+├── recommendation_engine.py
+├── performance_comparison.py
+├── snapdragon_executor.py
+├── create_resnet.py                # ResNet50 benchmark model
+├── test_inference.py
+├── check_dataset.py
+├── benchmark_results.json
+├── engineering_report.json
+├── userguide.md
+├── models/
+│   ├── best.pt                     # YOLO11n component detector
+│   ├── snaplab_v3_npu_manifest.json
+│   └── component_classifier/
+│       ├── best.pt                 # MobileNet refinement model
+│       └── classes.json
+├── vision/
+│   ├── component_inspector_v2.py   # Flagship Gradio application
+│   ├── component_refinement_engine.py
+│   ├── component_fusion_engine.py
+│   ├── component_knowledge.py
+│   ├── engineering_ontology.py
+│   ├── circuit_intelligence.py
+│   ├── crop_engine.py
+│   ├── spatial_engine.py
+│   ├── relationship_engine.py
+│   ├── wire_detector.py / wire_detector_v3.py
+│   ├── wire_association.py
+│   ├── connection_engine.py / connection_graph.py
+│   ├── openai_engine.py
+│   ├── snapdragon_npu_adapter.py
+│   └── vlm/
+│       ├── vlm_engine.py
+│       ├── vlm_prompt.py
+│       └── vlm_deployment.json
+├── tools/                          # Dataset & classifier training tools
+└── docs/
+    ├── userguide.md
+    ├── userguide_images/
+    └── screenshots/
 ```
 
 ---
 
-## 🛣️ Roadmap
+## 🔐 Configuration & Security
 
-- [x] YOLO11n + MobileNet two-stage detection (65 classes)
-- [x] Spatial, wire and connection-graph engines
-- [x] Multi-image sessions with cross-image isolation
-- [x] ResNet50 INT8 on Snapdragon X Elite NPU (0.623 ms)
-- [x] Engineering Copilot dashboard with live KPIs
-- [ ] Run the full YOLO + MobileNet pipeline on the NPU
-- [ ] Labeled real-world accuracy validation
-- [ ] Fault detection (reversed LED, missing resistor, short circuits)
-- [ ] Live camera mode
+| Variable | Purpose |
+|---|---|
+| `GROQ_API_KEY` | Optional Groq-backed engineering reasoning |
+| `OPENAI_API_KEY` | Optional OpenAI-backed engineering reasoning |
+| `PORT`, `SERVER_NAME` | Server binding for cloud or server runs |
+
+- Never commit `.env`, API keys or tokens. Store Modal secrets in Modal.
+- Large datasets, temporary benchmarks and hardware-specific bundles are excluded through `.gitignore`.
+- If no API key is set, the app falls back to the built-in engineering rule engine.
 
 ---
 
-<p align="center">
-  <b>SnapLab-AI</b> · Qualcomm AI Hub · Snapdragon X Elite · YOLO11n · MobileNet · ResNet50 · INT8 NPU<br/>
-  <sub>Made with ⚡ by <a href="https://github.com/iblamepuru">@iblamepuru</a></sub>
-</p>
+## ⚠️ Limitations
+
+- Visual inference is **not** electrical verification. It does not replace continuity testing, simulation or datasheet review.
+- Hidden, crossing or similarly coloured wires reduce wire-tracing reliability.
+- Engineering specs are **class-level** guidance. Check exact part numbers against manufacturer datasheets.
+- DRC findings are engineering assistance, not absolute truth.
+- NPU benchmark figures apply to the ResNet50 benchmark, not the full hosted pipeline.
+
+---
+
+## 🗺️ Roadmap
+
+Planned work (**not yet implemented**):
+
+- [ ] Full YOLO + MobileNet deployment on the Snapdragon NPU
+- [ ] Broader real-world validation with per-class precision, recall and F1
+- [ ] Fault detection: reversed LEDs, missing resistors, shorts and opens
+- [ ] Live camera mode
+- [ ] Stronger wire tracing and connection confidence
+- [ ] Component-level datasheet retrieval
+- [ ] PCB-aware analysis and schematic generation
+- [ ] Richer Engineering Copilot
+
+---
+
+<div align="center">
+
+**SnapLab AI** — from seeing a circuit to understanding it.
+
+[🌐 Live Demo](https://iblamepuru--snaplab-ai-web.modal.run/) · [📘 User Guide](userguide.md) · [💻 Repository](https://github.com/iblamepuru/SnapLabAI)
+
+</div>
