@@ -1,10 +1,18 @@
 <div align="center">
 
-## 🌐 [▶ Try SnapLab AI Live](https://iblamepuru--snaplab-ai-web.modal.run/)
+# ⚡ SnapLab AI
+
+### Real-Time On-Device Engineering Copilot for Snapdragon AI PCs
+
+<br/>
+
+## 👉 **[CLICK HERE TO VIEW THE LIVE PROJECT](https://iblamepuru--snaplab-ai-web.modal.run/)** 👈
+
+[![Open Live Website](https://img.shields.io/badge/%E2%96%B6%20OPEN%20LIVE%20WEBSITE-iblamepuru--snaplab--ai--web.modal.run-FF6B00?style=for-the-badge)](https://iblamepuru--snaplab-ai-web.modal.run/)
 
 **https://iblamepuru--snaplab-ai-web.modal.run/**
 
-[![Open Live Website](https://img.shields.io/badge/%E2%96%B6%20OPEN%20LIVE%20WEBSITE-iblamepuru--snaplab--ai--web.modal.run-FF6B00?style=for-the-badge)](https://iblamepuru--snaplab-ai-web.modal.run/)
+<br/>
 
 ---
 
@@ -41,10 +49,6 @@
 ![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github&logoColor=white)
 
 ---
-
-# ⚡ SnapLab AI
-
-### Real-Time On-Device Engineering Copilot for Snapdragon AI PCs
 
 **Photograph a circuit. Get a component inventory, spatial and wiring evidence, a connection graph and an explainable engineering report.**
 
